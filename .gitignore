@@ -1,0 +1,13 @@
+/node_modules/
+/public/build/
+
+.DS_Store
+yarn.lock
+
+.vscode/
+
+Rectangle 5(1).png
+Rectangle 5(2).png
+nvimSess
+test1.png
+
