@@ -1,0 +1,166 @@
+* {
+	--primary-bg: #f1f1f1;
+	--primary-fg: #5f5f5f;
+	--secondary-fg: #fff;
+	--secondary-bg: #57efdd;
+	--card-bg: #e3e3e3;
+	--card-brd: #c2c0c0;
+	--edit-brd: #cecece; 
+	--danger: #ff5050;
+	--success: green;
+}
+
+@font-face {
+    font-family: 'A Iranian Sans';
+    src: url('./fonts/AIranianSans.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'robotobold';
+    src: url('./fonts/Roboto-Bold-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'robotomedium';
+    src: url('./fonts/Roboto-Medium-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+html, body {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	color: var(--primary-fg);
+	background-color: var(--primary-bg);
+	margin: 0;
+	padding: 1rem 1.19rem 1rem 1.45rem;
+	box-sizing: border-box;
+	font-family: "A Iranian Sans", robotomedium, robotobold;
+	font-size: 16px;
+}
+
+svg{
+	fill: currentColor;
+}
+
+a {
+	color: rgb(0,100,200);
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:visited {
+	color: rgb(0,80,160);
+}
+
+label {
+	display: block;
+	font-size: 0.75rem;
+	line-height: 0.75rem;
+	max-height: 0.75rem;
+}
+
+input, button, select, textarea {
+	font-family: inherit;
+	font-size: inherit;
+	-webkit-padding: 0.4em 0;
+	padding: 0.4em;
+	margin: 0 0 0.5em 0;
+	box-sizing: border-box;
+	border: 1px solid #ccc;
+	border-radius: 2px;
+}
+
+input {
+	border-radius: 5px;
+	border-color: var(--edit-brd);
+	height: 1.75rem;
+	line-height: 1.75rem;
+	outline: none;
+
+}
+
+input[type="date"] {
+	padding: 0px 0.375rem;
+}
+
+input:disabled {
+	color: #ccc;
+}
+button {
+	outline: none;
+	border: none;
+	padding: 2px 1.43rem;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 0.75rem;
+	font-weight: bold;
+}
+
+.danger-fg {
+	color: var(--danger);
+}
+
+.success-fg {
+	color: var(--success);
+}
+
+.danger-bg {
+	background-color: var(--danger);
+}
+
+.success-bg {
+	background-color: var(--success);
+}
+
+.inline-block {
+	display: inline-block;
+}
+
+.hide {
+	display: none;
+}
+
+.show {
+	display: block !important;
+}
+
+.inline {
+	display: inline-block;
+}
+
+.secondary {
+	background-color: var(--secondary-bg);
+	color: var(--secondary-fg);
+}
+
+.dander {	
+	background-color: var(--danger);
+	color: var(--secondary-fg);
+}
+
+button.secondary:not(:disabled):active {
+	background-color: var(--secondary-fg);
+	color: var(--secondary-bg);
+}
+
+button.dander:not(:disabled):active {
+	background-color: var(--secondary-fg);
+	color: var(--danger);
+}
+.secondary-fg{
+	color: var(--secondary-fg);
+}

@@ -1,0 +1,58 @@
+<!--
+	@component
+	SearchBox, a fancy search-box
+	@property  {string} searchTerm String parameter which user tries to search.
+-->
+<script type="ts">
+	export let searchTerm: string = "";
+	export let onChange: (value: string) => void = null;
+
+	$: onChange && onChange(searchTerm);
+</script>
+
+<div class="searchBox">
+	<svg
+		class="icon"
+		width="20"
+		height="20"
+		viewBox="0 0 20 20"
+		fill="none"
+		xmlns="http://www.w3.org/2000/svg"
+	>
+		<path
+			d="M19.5434 18.6174L15.4283 14.5268C15.4224 14.5209 15.4164 14.5154 15.4104 14.5098C16.6962 13.0048 17.4728 11.0516 17.4728 8.91687C17.4728 4.15911 13.6159 0.302185 8.8581 0.302185C4.10033 0.302185 0.243408 4.15911 0.243408 8.91687C0.243408 13.6746 4.10033 17.5316 8.8581 17.5316C11.0092 17.5316 12.976 16.7431 14.4857 15.4395C14.4913 15.4456 14.497 15.4517 14.503 15.4576L18.6181 19.5482C18.7409 19.6707 18.9073 19.7393 19.0807 19.7391C19.2493 19.7391 19.4179 19.6745 19.5462 19.5455C19.8016 19.2884 19.8004 18.8729 19.5434 18.6174ZM11.7 15.6458C10.8006 16.0262 9.84446 16.2191 8.8581 16.2191C7.87173 16.2191 6.91557 16.0262 6.01616 15.6458C5.14677 15.278 4.36571 14.7513 3.69467 14.0803C3.02363 13.4093 2.49692 12.6282 2.12921 11.7588C1.7488 10.8594 1.55591 9.90324 1.55591 8.91687C1.55591 7.9305 1.7488 6.97435 2.12921 6.07493C2.49692 5.20554 3.02363 4.42449 3.69467 3.75345C4.36571 3.08241 5.14677 2.5557 6.01616 2.18799C6.91557 1.80758 7.87173 1.61468 8.8581 1.61468C9.84446 1.61468 10.8006 1.80758 11.7 2.18799C12.5694 2.5557 13.3505 3.08241 14.0215 3.75345C14.6926 4.42449 15.2193 5.20554 15.587 6.07493C15.9674 6.97435 16.1603 7.9305 16.1603 8.91687C16.1603 9.90324 15.9674 10.8594 15.587 11.7588C15.2193 12.6282 14.6926 13.4093 14.0215 14.0803C13.3505 14.7513 12.5694 15.278 11.7 15.6458Z"
+			fill="#5F5F5F"
+		/>
+	</svg>
+	<input type="text" bind:value={searchTerm} placeholder="جستجوی نام فرد" />
+</div>
+
+<style>
+	:global(.searchBox) {
+		position: relative;
+		background-color: white;
+		border-radius: 9px;
+		height: 3rem;
+		direction: rtl;
+		box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.15);
+	}
+	.searchBox .icon {
+		position: absolute;
+		top: 0.9rem;
+		right: 1.45rem;
+	}
+
+	.searchBox input {
+		background-color: transparent;
+		border: none;
+		color: var(--primary-fg);
+		font-size: 0.9rem;
+		font-style: normal;
+		font-weight: 500;
+		outline: none;
+		position: absolute;
+		right: 3.5rem;
+		top: 0.5rem;
+		width: calc(100% - 4rem);
+	}
+</style>
