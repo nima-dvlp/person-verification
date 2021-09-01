@@ -62,7 +62,7 @@
 		}
 	}
 
-	function onOk(): boolean {
+	async function onOk(): Promise<boolean> {
 		console.log(person);
 		let msg: string = "";
 		const pushMsg = (newMsg: string) => {
@@ -81,7 +81,7 @@
 		if (new Date(dateString).toJSON() === null) {
 			pushMsg("Birth date is invalid or not entered, required");
 		} else {
-			console.log("Date accepted ????!", dateString);
+			//console.log("Date accepted ????!", dateString);
 			person.birthDate.value = new Date(dateString);
 		}
 		if (person.address.value.length <= 5) pushMsg("Address is required");
@@ -93,27 +93,20 @@
 		if (msg.length > 0) {
 			alert(msg);
 		} else {
-			console.log("DB: ", db);
 			if (person.id === null) {
-				console.log("Inserting person");
-				db.insert({
-					onerror: (e: any) => {
-						console.error(e.target);
-						alert(e.target.error.message);
-					},
-					onsuccess: onDBSuccess,
-					store: person,
-				});
+				let insert = await db.insert(person);
+				if (!insert.success) {
+					alert(insert.event);
+				} else {
+					onDBSuccess(null);
+				}
 			} else {
-				console.log("Updating");
-				db.update({
-					onerror: (e: any) => {
-						console.error(e.target);
-						alert(e.target.error.message);
-					},
-					onsuccess: onDBSuccess,
-					store: person,
-				});
+				let update = await db.update(person);
+				if (!update.success) {
+					alert(update.event);
+				} else {
+					onDBSuccess(null);
+				}
 			}
 		}
 
@@ -124,9 +117,9 @@
 {#if showModal}
 	<div class="fullScreen">
 		<form
-			on:submit={(e) => {
+			on:submit={async (e) => {
 				e.preventDefault();
-				return onOk();
+				return await onOk();
 			}}
 		>
 			<div class="detail">
