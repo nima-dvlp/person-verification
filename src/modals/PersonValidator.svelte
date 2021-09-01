@@ -44,14 +44,13 @@
 		nameInput.focus();
 	}
 
-	function onOk() {
-		db.update({
-			store: person,
-			onerror: (e: any) => {
-				alert(e.target.error);
-			},
-			onsuccess: onDBSuccess,
-		});
+	async function onOk() {
+		let update = await db.update(person);
+		if (!update.success) {
+			alert(update.event);
+			return;
+		}
+		onDBSuccess(null);
 	}
 </script>
 
