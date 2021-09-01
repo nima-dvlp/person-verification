@@ -51,7 +51,7 @@ export class Person implements Storable {
 	 *new, make an empty Person object
 	 */
 	public static new(): Person {
-		return new Person(null, null, "", "", "", new Date(), "", "");
+		return new Person(null, null, "", "", "", null, "", "");
 	}
 
 	public static fromStore(store: {
