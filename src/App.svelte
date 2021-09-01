@@ -1,5 +1,4 @@
 <script type="ts">
-	import { tick } from "svelte";
 	import CheckBox from "./components/CheckBox.svelte";
 	import Container from "./components/Container.svelte";
 	import PersonCard from "./components/PersonCard.svelte";
@@ -16,6 +15,7 @@
 	import db from "./api/db";
 	import ActionBtn from "./components/ActionBtn.svelte";
 	import PersonValidator from "./modals/PersonValidator.svelte";
+	import { onMount } from "svelte";
 
 	let personEditor: PersonEditor;
 	let personValidator: PersonValidator;
@@ -68,22 +68,18 @@
 		}
 	}
 
-	function deleteSelection() {
+	async function deleteSelection() {
 		let deleteList: Array<Person> = [];
 		personList.forEach((p) => {
 			if (p.displayed && p.selected) deleteList.push(p.item);
 		});
 		if (deleteList.length > 0) {
 			console.log("To be deleted:", deleteList);
-			deleteList.forEach((d) =>
-				db.delete({
-					store: d,
-					onsuccess: Refresh,
-					onerror: (e) => {
-						console.error(e.target);
-					},
-				})
-			);
+			deleteList.forEach(async (d) => {
+				let deleted = await db.delete(d);
+				if (!deleted.success)
+					console.error("delete ", d, " failed ", deleted.event);
+			});
 		} else {
 			//Selection may be hidden by searchTerm
 			alert(
@@ -95,29 +91,22 @@
 	//This function will pass to personEditor as onsuccess,
 	//or to db.delete as onsuccess,whenever a person createted/deleted this fn will called
 	//at this moment we will refresh list
-	function Refresh(_: any) {
+	async function Refresh(_: any) {
 		personList = [];
-		db.list("personApprovalStore", (e: any) => {
-			e.target.result.forEach((ps: any) =>
+		let list = await db.list("personApprovalStore");
+		if (list.success) {
+			list.data.forEach((ps: any) =>
 				personList.push(new DisplayListItem(Person.fromStore(ps)))
 			);
 			checkAll = false;
 			indeterminate = false;
 			personList = personList;
 			displayItemsCount = personList.length;
-		});
+		}
 	}
 
-	//set a connect notifier to DB, after connecting to database
-	//we request person list
-	db.addConnectListener(() => {
-		db.list("personApprovalStore", (e: any) => {
-			e.target.result.forEach((ps: any) =>
-				personList.push(new DisplayListItem(Person.fromStore(ps)))
-			);
-			personList = personList;
-			displayItemsCount = personList.length;
-		});
+	onMount(async () => {
+		await Refresh(null);
 	});
 </script>
 
