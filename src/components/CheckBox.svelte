@@ -8,6 +8,9 @@
 	export let onChange: (newValue: boolean) => void = null;
 
 	function clickHandler() {
+		if (indeterminate) {
+			indeterminate = false;
+		}
 		checked = !checked;
 		if (onChange) {
 			onChange(checked);
