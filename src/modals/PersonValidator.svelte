@@ -3,7 +3,6 @@
 
 	import { Person } from "../types/person";
 	import db from "../api/db";
-	import Checked from "../icons/checked.svelte";
 
 	export let person: Person = Person.new();
 
@@ -44,14 +43,14 @@
 		await tick();
 		nameInput.focus();
 	}
-	
+
 	function onOk() {
 		db.update({
 			store: person,
 			onerror: (e: any) => {
 				alert(e.target.error);
 			},
-			onsuccess: onDBSuccess
+			onsuccess: onDBSuccess,
 		});
 	}
 </script>
@@ -59,11 +58,11 @@
 {#if showModal}
 	<div class="fullScreen">
 		<div class="detail">
-			<div class="detailLabel">
-				Name:
-			</div>
+			<div class="detailLabel">Name:</div>
 			<div>
-				<div class="detailValue {person.name.verified ? 'validated' : ''}">{person.name.value}</div>
+				<div class="detailValue {person.name.verified ? 'validated' : ''}">
+					{person.name.value}
+				</div>
 				<div style="float: right; ">
 					<div
 						on:click={() => validateField("name", false)}
@@ -76,11 +75,13 @@
 				</div>
 			</div>
 
-			<div class="detailLabel">
-				Family Name:
-			</div>
+			<div class="detailLabel">Family Name:</div>
 			<div>
-				<div class="detailValue {person.lastName.verified ? 'validated' : ''}">{person.lastName.value}</div>
+				<div
+					class="detailValue {person.lastName.verified ? 'validated' : ''}"
+				>
+					{person.lastName.value}
+				</div>
 				<div style="float: right; ">
 					<div
 						on:click={() => validateField("lastName", false)}
@@ -93,11 +94,13 @@
 				</div>
 			</div>
 
-			<div class="detailLabel">
-				Mobil:
-			</div>
+			<div class="detailLabel">Mobil:</div>
 			<div>
-				<div class="detailValue {person.mobile.verified ? 'validated' : ''}">{person.mobile.value}</div>
+				<div
+					class="detailValue {person.mobile.verified ? 'validated' : ''}"
+				>
+					{person.mobile.value}
+				</div>
 				<div style="float: right; ">
 					<div
 						on:click={() => validateField("mobile", false)}
@@ -110,11 +113,11 @@
 				</div>
 			</div>
 
-			<div class="detailLabel">
-				ID No.:
-			</div>
+			<div class="detailLabel">ID No.:</div>
 			<div>
-				<div class="detailValue {person.idNo.verified ? 'validated' : ''}">{person.idNo.value}</div>
+				<div class="detailValue {person.idNo.verified ? 'validated' : ''}">
+					{person.idNo.value}
+				</div>
 				<div style="float: right; ">
 					<div
 						on:click={() => validateField("idNo", false)}
@@ -127,13 +130,15 @@
 				</div>
 			</div>
 
-			<div
-				class="detailLabel"
-			>
-				Birth date:
-			</div>
+			<div class="detailLabel">Birth date:</div>
 			<div>
-				<div class="detailValue {person.birthDate.verified ? 'validated' : ''}">{dateString}</div>
+				<div
+					class="detailValue {person.birthDate.verified
+						? 'validated'
+						: ''}"
+				>
+					{dateString}
+				</div>
 				<div style="float: right; ">
 					<div
 						on:click={() => validateField("birthDate", false)}
@@ -146,11 +151,13 @@
 				</div>
 			</div>
 
-			<div class="detailLabel">
-				Address:
-			</div>
+			<div class="detailLabel">Address:</div>
 			<div>
-				<div class="detailValue {person.address.verified ? 'validated' : ''}">{person.address.value}</div>
+				<div
+					class="detailValue {person.address.verified ? 'validated' : ''}"
+				>
+					{person.address.value}
+				</div>
 				<div style="float: right; ">
 					<div
 						on:click={() => validateField("address", false)}
@@ -164,10 +171,7 @@
 			</div>
 		</div>
 		<div class="detail" style="align-items: unset; padding-top: 3rem;">
-			<div 
-				class="detailLabel"
-				style="line-height: 0.75rem;"
-			>
+			<div class="detailLabel" style="line-height: 0.75rem;">
 				Profil Pic:
 			</div>
 			<div>
@@ -189,7 +193,7 @@
 			</div>
 		</div>
 		<div style="direction: rtl; margin-right: 1rem; margin-top: 4.375rem;">
-			<button class="secondary" on:click={()=> onOk()}>save</button>
+			<button class="secondary" on:click={() => onOk()}>save</button>
 
 			<button
 				type="button"
