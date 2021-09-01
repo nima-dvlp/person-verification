@@ -51,9 +51,10 @@
 			<CheckBox bind:checked={personDLI.selected} onChange={onSelectClick} />
 		</div>
 
-		<div class="picture">
-			<img src={personDLI.item.pic.value} alt="" />
-		</div>
+		<div
+			class="picture"
+			style="background-image: url('{personDLI.item.pic.value}');"
+		/>
 
 		<div class="detail">
 			<div>Name:</div>
@@ -92,8 +93,9 @@
 		height: 129px;
 		left: 11px;
 		top: 11px;
-		background-color: red;
 		border-radius: 5px;
+		background-position: center;
+		background-size: 100% auto;
 	}
 
 	.checkBtn {
