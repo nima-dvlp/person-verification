@@ -4,34 +4,21 @@ export interface Storable {
 	storeVersion(): any;
 }
 
-export interface StorableOperation<T extends Storable> {
-	store: T;
-	onerror: (e: any) => void;
-	onsuccess: (e: any) => void;
+export interface DBResult {
+	success: boolean;
+	data?: any;
+	event?: any;
 }
 
 class DB {
 	private db: IDBDatabase;
-
-	private connectListeners: Array<() => void> = [];
-
-	constructor() {
-		this.initDB();
-	}
-
-	public addConnectListener(listener: () => void) {
-		this.connectListeners.push(listener);
-	}
-
-	private dbOpenSuccess(e: any) {
-		db.db = e.target.result;
-		db.connectListeners.forEach(cl => cl());
-		console.log(db);
+	public get ok() {
+		return this.db !== null && this.db !== undefined
 	}
 
 	private createStores(evt: any) {
 		var dbi: IDBDatabase = evt.target.result;
-		console.log("Create store:", evt, dbi);
+		//console.log("Create store:", evt, dbi);
 		let store = dbi.createObjectStore(
 			"personApprovalStore", {
 			keyPath: "id",
@@ -44,50 +31,108 @@ class DB {
 		store.createIndex("lastName", "lastName", {multiEntry: true});
 	}
 
-	private dbOpenError(e: any) {
-		console.log("DB init failed: ", e);
+	public async initDB(): Promise<DBResult> {
+		if (this.ok)
+			return;
+		return new Promise((resolve: (e: DBResult) => void, reject: (e: DBResult) => void) => {
+			let dbReq = indexedDB.open("personApproval", 1);
+			dbReq.onupgradeneeded = this.createStores;
+			function onOk(e: any) {
+				db.db = e.target.result;
+				resolve({success: true, data: db});
+			}
+			dbReq.onsuccess = onOk;
+			function onErr(e: any) {
+				reject({success: false, event: e});
+			}
+			dbReq.onerror = onErr;
+		});
 	}
 
-	private initDB() {
-		let dbReq = indexedDB.open("personApproval", 1);
-		dbReq.onupgradeneeded = this.createStores;
-		dbReq.onsuccess = this.dbOpenSuccess;
-		dbReq.onerror = this.dbOpenError;
-	}
-
-	public insert<T extends Storable>(so: StorableOperation<T>) {
-		let storeVersion = so.store.storeVersion();
+	private async _insert(so: Storable): Promise<DBResult> {
+		let storeVersion = so.storeVersion();
+		//This will cause an error while the id field is null
 		delete storeVersion.id;
-		console.log("Inserting:", storeVersion);
-		let addOp = this.db.transaction(so.store.storeName, "readwrite")
-			.objectStore(so.store.storeName)
-			.add(storeVersion);
-		addOp.onerror = so.onerror;
-		addOp.onsuccess = so.onsuccess;
+		try {
+			return new Promise((resolve: (e: DBResult) => void, reject: (e: DBResult) => void) => {
+				let addOp = this.db.transaction(so.storeName, "readwrite")
+					.objectStore(so.storeName)
+					.add(storeVersion);
+				function onOk(e: any) {
+					resolve({success: true, data: e.target.result});
+				}
+				function onError(e: any) {
+					reject({success: false, event: e});
+				}
+				addOp.onerror = onError;
+				addOp.onsuccess = onOk;
+			});
+		} catch (e: any) {
+			console.log("Handeled");
+			return e
+		}
 	}
 
-	public list(storeName: string, handler: (e: any) => void) {
-		this.db.transaction(storeName, "readonly")
-			.objectStore(storeName)
-			.getAll().onsuccess = handler;
+	//Calling _insert to handle throws
+	public async insert(so: Storable): Promise<DBResult> {
+		await this.initDB();
+		try {
+			return await this._insert(so);
+		} catch (e: any) {
+			return e;
+		}
 	}
 
-	public delete<T extends Storable>(so: StorableOperation<T>) {
-		let dlRq = this.db.transaction(so.store.storeName, "readwrite")
-			.objectStore(so.store.storeName)
-			.delete(so.store.storeVersion()[so.store.keyField]);
-		dlRq.onsuccess = so.onsuccess;
-		dlRq.onerror = so.onerror;
+	public async list(storeName: string): Promise<DBResult> {
+		await this.initDB();
+		return new Promise((resolve: (e: DBResult) => void, reject: (e: DBResult) => void) => {
+			let listReq = this.db.transaction(storeName, "readonly")
+				.objectStore(storeName)
+				.getAll();
+			function onOk(e: any) {
+				resolve({success: true, data: e.target.result});
+			}
+			function onError(e: any) {
+				reject({success: false, data: e.target.result});
+			}
+			listReq.onsuccess = onOk;
+			listReq.onerror = onError;
+		});
 	}
 
-	public update<T extends Storable>(so: StorableOperation<T>) {
-		let storeVersion = so.store.storeVersion();
-		console.log("Updateing storeVersion: ", storeVersion);
-		let upRq = this.db.transaction(so.store.storeName, "readwrite")
-			.objectStore(so.store.storeName)
-			.put(storeVersion);
-		upRq.onerror = so.onerror;
-		upRq.onsuccess = so.onsuccess;
+	public async delete(so: Storable): Promise<DBResult> {
+		await this.initDB();
+		return new Promise((resolve: (e: DBResult) => void, reject: (e: DBResult) => void) => {
+			let dlRq = this.db.transaction(so.storeName, "readwrite")
+				.objectStore(so.storeName)
+				.delete(so.storeVersion()[so.keyField]);
+			function onOk(e: any) {
+				resolve({success: true, data: e.target.result});
+			}
+			function onError(e: any) {
+				reject({success: false, event: e});
+			}
+			dlRq.onerror = onError;
+			dlRq.onsuccess = onOk;
+		});
+	}
+
+	public async update(so: Storable): Promise<DBResult> {
+		await this.initDB();
+		let storeVersion = so.storeVersion();
+		return new Promise((resolve: (e: DBResult) => void, reject: (e: DBResult) => void) => {
+			let upRq = this.db.transaction(so.storeName, "readwrite")
+				.objectStore(so.storeName)
+				.put(storeVersion);
+			function onOk(e: any) {
+				resolve({success: true, data: e.target.result});
+			}
+			function onError(e: any) {
+				reject({success: false, event: e});
+			}
+			upRq.onerror = onError;
+			upRq.onsuccess = onOk;
+		});
 	}
 
 }
