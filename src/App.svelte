@@ -75,11 +75,20 @@
 		});
 		if (deleteList.length > 0) {
 			console.log("To be deleted:", deleteList);
-			deleteList.forEach(async (d) => {
+			let dlSuccess = 0;
+			for await (const d of deleteList) {
 				let deleted = await db.delete(d);
-				if (!deleted.success)
+				console.log(deleted);
+				if (!deleted.success) {
 					console.error("delete ", d, " failed ", deleted.event);
-			});
+				} else {
+					dlSuccess++;
+				}
+			}
+			console.log("dlSuccess", dlSuccess);
+			if (dlSuccess > 0) {
+				Refresh(null);
+			}
 		} else {
 			//Selection may be hidden by searchTerm
 			alert(
