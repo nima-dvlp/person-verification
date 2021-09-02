@@ -9,14 +9,6 @@
 	let showModal: boolean = false;
 	let imageSrc: string = "";
 
-	//The input element of name entery, just used to set focus on show!
-	let nameInput: HTMLInputElement;
-
-	//fileInput used to keep a reference to the fileInput element,
-	//fileInput.click() make a fileChoser available to the user!
-	//used in onPicSelect instead of handling event
-	let fileInput: HTMLInputElement;
-
 	//Date is not manageable by Svelte bindings, so we need to handle it...
 	let dateString: string;
 
@@ -40,8 +32,6 @@
 		imageSrc = p.pic.value;
 		showModal = true;
 		onDBSuccessHandler = onSuccess;
-		await tick();
-		nameInput.focus();
 	}
 
 	async function onOk() {
@@ -176,7 +166,6 @@
 			<div>
 				<div
 					class="imageWrapper {person.pic.verified ? 'validatedPic' : ''}"
-					on:click={() => fileInput.click()}
 					style="background-image: url({imageSrc});"
 				/>
 				<div style="float: right; ">
